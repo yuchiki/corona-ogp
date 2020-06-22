@@ -6,10 +6,6 @@ import { TokyoCoronaData } from "./TokyoCoronaData";
 
 async function main() {
   const url = "https://raw.githubusercontent.com/tokyo-metropolitan-gov/covid19/development/data/daily_positive_detail.json"
-  const TokyoCoronaDatas = await axios.get<TokyoCoronaData>(url);
-
-
-
 
   const app: express.Express = express();
 
@@ -29,8 +25,10 @@ async function main() {
 
   // Getのルーティング
   const router: express.Router = express.Router();
-  router.get("/", (req: express.Request, res: express.Response) => {
+  router.get("/", async (req: express.Request, res: express.Response) => {
     const length = req.params.dates ? Number(req.params.dates) : 5; // datesがクエリパラメータから取得できない
+
+    const TokyoCoronaDatas = await axios.get<TokyoCoronaData>(url);
     const lines = TokyoCoronaDatas.data.data.slice(-length).map(datum => `${datum.diagnosed_date.slice(-2)}日: ${datum.count}人`);
 
     const template = `
@@ -57,7 +55,7 @@ async function main() {
 
   // 3000番ポートでAPIサーバ起動
   app.listen(3000, () => {
-    console.log("Example app listening on port 3000!");
+    console.log("listening on port 3000!");
   });
 
 }
