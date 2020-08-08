@@ -25,7 +25,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "tsc:ver": "tsc -v",
     "tsc": "tsc",
-    "ts-node": "ts-node"
+    "ts-node": "ts-node",
+    "build": "npm run tsc",
+    "start": "node index.js"
   },
   "keywords": [],
   "author": "",
