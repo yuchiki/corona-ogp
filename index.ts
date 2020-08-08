@@ -59,7 +59,7 @@ async function main() {
   app.use(router);
 
   app.listen(port, () => {
-    console.log("listening on port 3000!");
+    console.log("listening on port %d!", port);
   });
 
 }
