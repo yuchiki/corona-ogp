@@ -42,7 +42,7 @@ async function main() {
 <head>
   <meta property="og:title" content="東京の感染者数"/>
   <meta property="og:type" content="website"/>
-  <meta property="og:description" value="${lines.join(", ")}"
+  <meta property="og:description" value="${lines.join(", ")}" />
   <meta property="og:url" content="https://raw.githubusercontent.com/tokyo-metropolitan-gov/covid19/development/data/daily_positive_detail.json"/>
   <title>fuga</title>
 </head>
