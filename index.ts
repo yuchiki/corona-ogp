@@ -3,6 +3,7 @@ import * as request from "superagent";
 import axios from "axios";
 import { TokyoCoronaData } from "./TokyoCoronaData";
 
+const port = process.env.PORT || 8000;
 
 async function main() {
   const url = "https://raw.githubusercontent.com/tokyo-metropolitan-gov/covid19/development/data/daily_positive_detail.json"
@@ -57,8 +58,7 @@ async function main() {
 
   app.use(router);
 
-  // 3000番ポートでAPIサーバ起動
-  app.listen(3000, () => {
+  app.listen(port, () => {
     console.log("listening on port 3000!");
   });
 
