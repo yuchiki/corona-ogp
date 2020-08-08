@@ -26,9 +26,13 @@ async function main() {
   // Getのルーティング
   const router: express.Router = express.Router();
   router.get("/", async (req: express.Request, res: express.Response) => {
+    console.log("request process started.")
+
     const length = req.params.dates ? Number(req.params.dates) : 5; // datesがクエリパラメータから取得できない
+    console.log("length=%d", length);
 
     const TokyoCoronaDatas = await axios.get<TokyoCoronaData>(url);
+    console.log("TokyoCoronaDataLength: %d", TokyoCoronaDatas.data.data.length);
     const lines = TokyoCoronaDatas.data.data.slice(-length).map(datum => `${datum.diagnosed_date.slice(-2)}日: ${datum.count}人`);
 
     const template = `
