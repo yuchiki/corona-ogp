@@ -1,5 +1,4 @@
 import express from "express";
-import * as request from "superagent";
 import axios from "axios";
 import { TokyoCoronaData } from "./TokyoCoronaData";
 
