@@ -26,8 +26,8 @@
     "tsc:ver": "tsc -v",
     "tsc": "tsc",
     "ts-node": "ts-node",
-    "build": "npm run tsc",
-    "start": "node index.js"
+    "build": "tsc -p tsconfig.json",
+    "start": "node build/index.js"
   },
   "keywords": [],
   "author": "",
