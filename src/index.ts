@@ -28,7 +28,7 @@ async function main() {
   router.get("/", async (req: express.Request, res: express.Response) => {
     console.log("request process started.")
 
-    const length = req.params.dates ? Number(req.params.dates) : 5; // datesがクエリパラメータから取得できない
+    const length = req.query.dates ? Number(req.query.dates) : 5;
     console.log("length=%d", length);
 
     const TokyoCoronaDatas = await axios.get<TokyoCoronaData>(url);
