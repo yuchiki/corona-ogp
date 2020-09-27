@@ -24,7 +24,7 @@
     "tsc:ver": "tsc -v",
     "tsc": "tsc",
     "ts-node": "ts-node",
-    "build": "tsc -p tsconfig.json;  apt install gnuplot",
+    "build": "tsc -p tsconfig.json",
     "start": "node build/index.js;"
   },
   "keywords": [],

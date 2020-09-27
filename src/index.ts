@@ -1,13 +1,9 @@
 import express from "express";
 import axios from "axios";
-import { TokyoCoronaData, Datum } from "./TokyoCoronaData";
-import { writeFileSync } from "fs";
-import { execSync } from "child_process";
-
+import { TokyoCoronaData } from "./TokyoCoronaData";
 const port = process.env.PORT || 8000;
-const pngFileName = "barChart.png";
 
-async function main() {
+function main() {
   const url =
     "https://raw.githubusercontent.com/tokyo-metropolitan-gov/covid19/development/data/daily_positive_detail.json";
 
@@ -45,8 +41,6 @@ async function main() {
       .slice(-length)
       .map((datum) => `${datum.diagnosed_date.slice(-2)}日: ${datum.count}人`);
 
-    createBarChart(TokyoCoronaDatas.data.data.slice(-90));
-
     const template = `
 <!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja" xmlns:og="http://ogp.me/ns#" xmlns:fb="http://www.facebook.com/2008/fbml">
@@ -72,16 +66,6 @@ async function main() {
   app.listen(port, () => {
     console.log("listening on port %d!", port);
   });
-}
-
-function createBarChart(datas: Datum[]) {
-  const datFileName = "data.dat";
-  const ssvData = datas
-    .map((data) => `${data.diagnosed_date} ${data.count}`)
-    .join("\n");
-  writeFileSync(datFileName, ssvData);
-
-  execSync("gnuplot drawBarChart.gnuplot");
 }
 
 main();
