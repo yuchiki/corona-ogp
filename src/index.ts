@@ -1,11 +1,15 @@
 import express from "express";
 import axios from "axios";
-import { TokyoCoronaData } from "./TokyoCoronaData";
+import { TokyoCoronaData, Datum } from "./TokyoCoronaData";
+import { writeFileSync } from "fs";
+import { execSync } from "child_process";
 
 const port = process.env.PORT || 8000;
+const pngFileName = "barChart.png";
 
 async function main() {
-  const url = "https://raw.githubusercontent.com/tokyo-metropolitan-gov/covid19/development/data/daily_positive_detail.json"
+  const url =
+    "https://raw.githubusercontent.com/tokyo-metropolitan-gov/covid19/development/data/daily_positive_detail.json";
 
   const app: express.Express = express();
 
@@ -19,6 +23,9 @@ async function main() {
     next();
   });
 
+  // 棒グラフ置き場
+  app.use(express.static("public"));
+
   // body-parserに基づいた着信リクエストの解析
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
@@ -26,14 +33,19 @@ async function main() {
   // Getのルーティング
   const router: express.Router = express.Router();
   router.get("/", async (req: express.Request, res: express.Response) => {
-    console.log("request process started.")
+    console.log("request process started.");
 
     const length = req.query.dates ? Number(req.query.dates) : 5;
     console.log("length=%d", length);
 
     const TokyoCoronaDatas = await axios.get<TokyoCoronaData>(url);
     console.log("TokyoCoronaDataLength: %d", TokyoCoronaDatas.data.data.length);
-    const lines = TokyoCoronaDatas.data.data.slice(-length).map(datum => `${datum.diagnosed_date.slice(-2)}日: ${datum.count}人`);
+
+    const lines = TokyoCoronaDatas.data.data
+      .slice(-length)
+      .map((datum) => `${datum.diagnosed_date.slice(-2)}日: ${datum.count}人`);
+
+    createBarChart(TokyoCoronaDatas.data.data.slice(-90));
 
     const template = `
 <!DOCTYPE HTML>
@@ -46,13 +58,13 @@ async function main() {
   <title>fuga</title>
 </head>
 <body>
-    ${lines.join("<br>\n")}
+    ${lines.join("<br>\n")}<br>
+    <img src="barChart.png">
 </body>
 </html>
 `;
 
     res.send(template);
-
   });
 
   app.use(router);
@@ -60,7 +72,16 @@ async function main() {
   app.listen(port, () => {
     console.log("listening on port %d!", port);
   });
+}
 
+function createBarChart(datas: Datum[]) {
+  const datFileName = "data.dat";
+  const ssvData = datas
+    .map((data) => `${data.diagnosed_date} ${data.count}`)
+    .join("\n");
+  writeFileSync(datFileName, ssvData);
+
+  execSync("gnuplot drawBarChart.gnuplot");
 }
 
 main();
