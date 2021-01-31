@@ -37,9 +37,25 @@ function main() {
     const TokyoCoronaDatas = await axios.get<TokyoCoronaData>(url);
     console.log("TokyoCoronaDataLength: %d", TokyoCoronaDatas.data.data.length);
 
-    const lines = TokyoCoronaDatas.data.data
-      .slice(-length)
-      .map((datum) => `${datum.diagnosed_date.slice(-2)}日: ${datum.count}人`);
+    const thisWeek = TokyoCoronaDatas.data.data.slice(-length);
+    const lastWeek = TokyoCoronaDatas.data.data.slice(-length - 7, -7);
+
+    const infosByDay = thisWeek.map((datum, i) => {
+      return {
+        date: new Date(datum.diagnosed_date),
+        count: datum.count,
+        ratio: datum.count / lastWeek[i].count,
+      };
+    });
+
+    const weekDays = ["日", "月", "火", "水", "木", "金", "土"];
+
+    const lines = infosByDay.map(
+      (info) =>
+        `${info.date.getDate()}日(${weekDays[info.date.getDay()]}): ${
+          info.count
+        }人 (${Math.floor(info.ratio * 100)}%)`
+    );
 
     const template = `
 <!DOCTYPE HTML>
@@ -47,13 +63,13 @@ function main() {
 <head>
   <meta property="og:title" content="東京の感染者数"/>
   <meta property="og:type" content="website"/>
-  <meta property="og:description" content="${lines.join(", ")}" />
+  <meta property="og:description" content="${lines.join(", ")}" ()内は先週比/>
   <meta property="og:url" content="https://raw.githubusercontent.com/tokyo-metropolitan-gov/covid19/development/data/daily_positive_detail.json"/>
   <title>fuga</title>
 </head>
 <body>
     ${lines.join("<br>\n")}<br>
-    <img src="barChart.png">
+    ()内は先週比
 </body>
 </html>
 `;
