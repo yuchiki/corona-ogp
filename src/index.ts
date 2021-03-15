@@ -74,6 +74,8 @@ function main() {
 </html>
 `;
 
+    console.log(template);
+
     res.send(template);
   });
 

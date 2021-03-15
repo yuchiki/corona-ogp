@@ -1,0 +1,12 @@
+name: Wake up Heroku before the reminder in yuchiki discord server
+on:
+  schedule:
+    - cron: '55 19 * * *'
+jobs:
+  curl:
+    runs-on: ubuntu-latest
+    steps:
+    - name: curl
+      uses: wei/curl@master
+      with:
+        args: https://secure-shelf-52274.herokuapp.com/
