@@ -31,7 +31,7 @@ function main() {
   router.get("/", async (req: express.Request, res: express.Response) => {
     console.log("request process started.");
 
-    const length = req.query.dates ? Number(req.query.dates) : 5;
+    const length = req.query.dates ? Number(req.query.dates) : 8;
     console.log("length=%d", length);
 
     const TokyoCoronaDatas = await axios.get<TokyoCoronaData>(url);
