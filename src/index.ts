@@ -1,6 +1,8 @@
 import express from "express";
 import axios from "axios";
 import { TokyoCoronaData } from "./TokyoCoronaData";
+import { InfoByDay }  from "./InfoByDay";
+import { generate } from "./image"
 const port = process.env.PORT || 8000;
 
 function main() {
@@ -20,7 +22,7 @@ function main() {
   });
 
   // 棒グラフ置き場
-  app.use(express.static("public"));
+  app.use('/public', express.static('public'));
 
   // body-parserに基づいた着信リクエストの解析
   app.use(express.json());
@@ -40,13 +42,12 @@ function main() {
     const thisWeek = TokyoCoronaDatas.data.data.slice(-length);
     const lastWeek = TokyoCoronaDatas.data.data.slice(-length - 7, -7);
 
-    const infosByDay = thisWeek.map((datum, i) => {
-      return {
-        date: new Date(datum.diagnosed_date),
-        count: datum.count,
-        ratio: datum.count / lastWeek[i].count,
-      };
+    const infosByDay = thisWeek.map((day, i) => {
+      return InfoByDay(day, lastWeek[i])
     });
+
+    const imageFilepath = await generate(infosByDay, "public");
+    const imagePath = `public/${imageFilepath}`
 
     const weekDays = ["日", "月", "火", "水", "木", "金", "土"];
 
